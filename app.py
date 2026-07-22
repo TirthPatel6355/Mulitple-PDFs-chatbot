@@ -35,6 +35,7 @@
 #     # )
 #     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
 #     return vectorstore
+import os
 import streamlit as st 
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
@@ -70,7 +71,7 @@ def get_vectorstore(text_chunks):
 
 def get_conversation_chain(vectorstore):
     # llm = ChatOpenAI()
-    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.5)
+    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.5, groq_api_key=os.getenv("GROQ_API_KEY"))
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     conversation = ConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -80,6 +81,9 @@ def get_conversation_chain(vectorstore):
     return conversation
 
 def handle_userinput(user_question):
+    if st.session_state.conversation is None:
+        st.warning("⚠️ Please upload and process your PDFs first before asking a question.")
+        return
     response = st.session_state.conversation({"question": user_question})
     st.session_state.chat_history = response["chat_history"]
 
