@@ -86,10 +86,26 @@ def main():
                 st.warning("⚠️ Please upload at least one PDF before processing.")
             else:
                 with st.spinner("Processing..."):
+
+                    st.write("Step 1")
+
                     raw_text = get_pdf_text(pdf_docs)
+
+                    st.write("Step 2")
+
                     text_chunks = get_text_chunks(raw_text)
+
+                    st.write("Step 3")
+
                     vectorstore = get_vectorstore(text_chunks)
-                    st.session_state.conversation = get_conversation_chain(vectorstore)
+
+                    st.write("Step 4")
+
+                    st.session_state.conversation = get_conversation_chain(
+                        vectorstore
+                    )
+
+                    st.write("DONE")
 
 
 if __name__ == '__main__':
