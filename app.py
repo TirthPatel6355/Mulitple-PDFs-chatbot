@@ -28,20 +28,63 @@ def get_text_chunks(raw_text):
     return text_splitter.split_text(raw_text)
 
 
-def get_vectorstore(text_chunks):
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
-    return vectorstore
+# def get_vectorstore(text_chunks):
+#     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+#     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+#     return vectorstore
 
+@st.cache_resource
+def load_embeddings():
+    from langchain_huggingface import HuggingFaceEmbeddings
+
+    return HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+
+def get_vectorstore(text_chunks):
+
+    from langchain_community.vectorstores import FAISS
+
+    embeddings = load_embeddings()
+
+    return FAISS.from_texts(
+        texts=text_chunks,
+        embedding=embeddings
+    )
+
+# def get_conversation_chain(vectorstore):
+#     llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.5, groq_api_key=os.getenv("GROQ_API_KEY"))
+#     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+#     conversation = ConversationalRetrievalChain.from_llm(
+#         llm=llm,
+#         retriever=vectorstore.as_retriever(),
+#         memory=memory
+#     )
+#     return conversation
 
 def get_conversation_chain(vectorstore):
-    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.5, groq_api_key=os.getenv("GROQ_API_KEY"))
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+    from langchain_groq import ChatGroq
+    from langchain_classic.memory import ConversationBufferMemory
+    from langchain_classic.chains import ConversationalRetrievalChain
+
+    llm = ChatGroq(
+        model="llama-3.1-8b-instant",
+        temperature=0.5,
+        groq_api_key=os.getenv("GROQ_API_KEY")
+    )
+
+    memory = ConversationBufferMemory(
+        memory_key="chat_history",
+        return_messages=True
+    )
+
     conversation = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=vectorstore.as_retriever(),
         memory=memory
     )
+
     return conversation
 
 
