@@ -5,35 +5,43 @@ css = '''
     border-radius: 0.5rem;
     margin-bottom: 1rem;
     display: flex;
+    flex-direction: column;
     max-width: 80%;
 }
 
 .chat-message.user {
     background-color: #2b313e;
     margin-left: auto;
-    flex-direction: row-reverse;
+    border-bottom-right-radius: 0;
 }
 
 .chat-message.bot {
     background-color: #475063;
     margin-right: auto;
-    flex-direction: row;
+    border-bottom-left-radius: 0;
 }
 
-.chat-message.avatar {
-    width: 15%;
+.chat-message .label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
 }
 
-.chat-message.avatar img {
-    max-width: 10px;
-    max-height: 10px;
-    border-radius: 50%;
-    object-fit: cover;
+.chat-message.user .label {
+    color: #8ab4f8;
+    text-align: right;
+}
+
+.chat-message.bot .label {
+    color: #a5d6a7;
+    text-align: left;
 }
 
 .chat-message .message {
-    width: 85%;
-    padding: 0 1rem;
+    width: 100%;
+    padding: 0;
     color: #fff;
 }
 </style>
@@ -41,18 +49,14 @@ css = '''
 
 bot_template = '''
 <div class="chat-message bot">
-    <div class="avatar">
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png">
-    </div>
+    <div class="label">🤖 AI</div>
     <div class="message">{{MSG}}</div>
 </div>
 '''
 
 user_template = '''
 <div class="chat-message user">
-    <div class="avatar">
-        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png">
-    </div>
+    <div class="label">🧑 You</div>
     <div class="message">{{MSG}}</div>
 </div>
 '''
