@@ -128,27 +128,19 @@ def main():
             if not pdf_docs:
                 st.warning("⚠️ Please upload at least one PDF before processing.")
             else:
-                with st.spinner("Processing..."):
-
-                    st.write("Step 1")
-
+                with st.spinner("📄 Reading your PDFs..."):
                     raw_text = get_pdf_text(pdf_docs)
 
-                    st.write("Step 2")
-
+                with st.spinner("✂️ Splitting text into chunks..."):
                     text_chunks = get_text_chunks(raw_text)
 
-                    st.write("Step 3")
-
+                with st.spinner("🧠 Building knowledge base..."):
                     vectorstore = get_vectorstore(text_chunks)
 
-                    st.write("Step 4")
+                with st.spinner("🔗 Setting up conversation chain..."):
+                    st.session_state.conversation = get_conversation_chain(vectorstore)
 
-                    st.session_state.conversation = get_conversation_chain(
-                        vectorstore
-                    )
-
-                    st.write("DONE")
+                st.success("✅ Done! You can now ask anything related to your PDFs.")
 
 
 if __name__ == '__main__':
